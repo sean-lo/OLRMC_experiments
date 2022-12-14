@@ -24,6 +24,8 @@ task_index = parse(Int, ARGS[1]) + 1
 n_tasks = parse(Int, ARGS[2])
 time_limit = nothing # CHANGE
 
+println("Processing rows: $(collect(task_index:n_tasks:size(args_df, 1)))")
+
 for row_index in task_index:n_tasks:size(args_df, 1)
 
     # Get paramters from args_df at row row_index
