@@ -1,0 +1,5 @@
+- Matrix completion (rank-1)
+- Full run
+- Eigenvalue disjunctions vs McCormick
+- Node selection
+- Alternating minimization

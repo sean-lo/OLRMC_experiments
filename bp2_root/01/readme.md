@@ -1,0 +1,3 @@
+- Basis pursuit (rank-2)
+- Root node only
+- Strength of relaxation
