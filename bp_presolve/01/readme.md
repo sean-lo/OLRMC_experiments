@@ -1,0 +1,3 @@
+- Basis pursuit (rank-1)
+- Number of entries presolved
+- Variety of proportion of entries filled
