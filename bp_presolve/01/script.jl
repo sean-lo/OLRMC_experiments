@@ -7,10 +7,11 @@ using CSV
 using DataFrames
 
 # simple test case to quickly compile 
-(A, indices) = generate_matrixcomp_data(1, 10, 10, 20, 0)
-result = @timed @suppress rank1_presolve(indices, A)
-(A, indices) = generate_matrixcomp_data(2, 10, 10, 40, 0)
-result = @timed @suppress rank2_presolve(indices, A)
+(A, indices) = generate_matrixcomp_data(1, 12, 12, 72, 0) # non-sparse version
+(A, indices) = generate_matrixcomp_data(1, 12, 12, 25, 0) # sparse version
+result = @timed @suppress rankk_presolve(indices, A, 1)
+(A, indices) = generate_matrixcomp_data(2, 12, 12, 48, 0)
+result = @timed @suppress rankk_presolve(indices, A, 2)
 println("Compilation complete.")
 
 args_df = DataFrame(CSV.File("$(@__DIR__)/args.csv"))
@@ -43,11 +44,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     records = []
     for seed in ((seed_index-1) * n_runs + 1):(seed_index * n_runs)
         local (A, indices) = generate_matrixcomp_data(k, n, n, num_indices, seed)
-        if k == 1
-            local result = @timed @suppress rank1_presolve(indices, A)
-        else
-            local result = @timed @suppress rank2_presolve(indices, A)
-        end
+        local result = @timed @suppress rankk_presolve(indices, A, k)
         (indices_presolved, X_presolved) = result.value
         push!(records, (
             seed = seed,
