@@ -55,7 +55,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
         end
     end
 
-    num_indices = Int(round(p * n * log10(n)))
+    num_indices = Int(ceil(p * n * log10(n)))
     local time_limit = Int(2 * n * n)
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
@@ -183,5 +183,6 @@ for row_index in task_index:n_tasks:size(args_df, 1)
             memory = result.bytes,
         )
     ]
+    result = nothing
     CSV.write("$(@__DIR__)/records/$(row_index).csv", DataFrame(records))
 end

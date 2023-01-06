@@ -40,9 +40,9 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     root_only = Bool(args_df[row_index, :root_only])
 
     if kind == "pkn"
-        num_indices = Int(round(p * k * n))
+        num_indices = Int(ceil(p * k * n))
     elseif kind == "pkn log10(n)"
-        num_indices = Int(round(p * k * n * log10(n)))
+        num_indices = Int(ceil(p * k * n * log10(n)))
     end
     local time_limit = Int(2 * k * n * n)
 

@@ -37,7 +37,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     add_Shor_valid_inequalities = Bool(args_df[row_index, :add_Shor_valid_inequalities])
     add_basis_pursuit_valid_inequalities = Bool(args_df[row_index, :add_basis_pursuit_valid_inequalities])
 
-    num_indices = Int(round(k * p * n * log10(n)))
+    num_indices = Int(ceil(k * p * n * log10(n)))
     local time_limit = Int(2 * k * n * n)
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
