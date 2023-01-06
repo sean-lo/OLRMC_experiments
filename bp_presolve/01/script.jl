@@ -57,6 +57,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
             entries_presolved = sum(indices_presolved),
             memory = result.bytes,
         ))
+        local result = nothing
     end
     CSV.write("$(@__DIR__)/records/$(row_index).csv", DataFrame(records))
 end

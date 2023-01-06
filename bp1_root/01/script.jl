@@ -171,6 +171,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
             memory = result.bytes,
         )
     ]
+    result = nothing
     CSV.write("$(@__DIR__)/records/$(row_index).csv", DataFrame(records))
 
 end
