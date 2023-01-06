@@ -18,7 +18,7 @@ args_df = DataFrame(CSV.File("$(@__DIR__)/args.csv"))
 
 task_index = parse(Int, ARGS[1]) + 1
 n_tasks = parse(Int, ARGS[2])
-n_runs = 50
+n_runs = 500
 time_limit = nothing # CHANGE
 
 println("Processing rows: $(collect(task_index:n_tasks:size(args_df, 1)))")
@@ -35,6 +35,8 @@ for row_index in task_index:n_tasks:size(args_df, 1)
         num_indices = Int(ceil(p * k * n))
     elseif kind == "pkn log10(n)"
         num_indices = Int(ceil(p * k * n * log10(n)))
+    elseif kind == "pkn^(6/5) log10(n)/10^(1/5)"
+        num_indices = Int(ceil(p * k * n^(1.2) * log10(n) / 10^(0.2)))
     elseif kind == "pkn^1.5/sqrt(10)"
         num_indices = Int(ceil(p * k * n^(1.5) / sqrt(10.0)))
     elseif kind == "pkn^2/10"
