@@ -23,7 +23,6 @@ args_df = DataFrame(CSV.File("$(@__DIR__)/args.csv"))
 
 task_index = parse(Int, ARGS[1]) + 1
 n_tasks = parse(Int, ARGS[2])
-time_limit = nothing # CHANGE
 
 println("Processing rows: $(collect(task_index:n_tasks:size(args_df, 1)))")
 
@@ -38,7 +37,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     add_basis_pursuit_valid_inequalities = Bool(args_df[row_index, :add_basis_pursuit_valid_inequalities])
 
     num_indices = Int(ceil(k * p * n * log10(n)))
-    local time_limit = Int(2 * k * n * n)
+    local time_limit = min(Int(2 * k * n * n), 3600)
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
         continue

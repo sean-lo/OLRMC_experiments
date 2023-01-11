@@ -23,7 +23,6 @@ args_df = DataFrame(CSV.File("$(@__DIR__)/args.csv"))
 
 task_index = parse(Int, ARGS[1]) + 1
 n_tasks = parse(Int, ARGS[2])
-time_limit = nothing # CHANGE
 
 println("Processing rows: $(collect(task_index:n_tasks:size(args_df, 1)))")
 
@@ -44,7 +43,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     elseif kind == "pkn log10(n)"
         num_indices = Int(ceil(p * k * n * log10(n)))
     end
-    local time_limit = Int(2 * k * n * n)
+    time_limit = 3600
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
         continue
