@@ -48,7 +48,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     )
     altmin_flag = args_df[row_index, :altmin_flag]
 
-    num_indices = Int(ceil(p * n * log10(n)))
+    num_indices = Int(ceil(p * k * n * log10(n)))
     time_limit = 3600
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
