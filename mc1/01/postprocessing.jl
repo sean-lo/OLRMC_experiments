@@ -13,31 +13,112 @@ sort!(results_df, [
     :node_selection,
     :altmin_flag,
 ])
-results_df
 CSV.write(results_filepath, results_df)
 
-for g in groupby(
-    results_df, [:k, :n, :p, :noise, :γ,
-    :use_disjunctive_cuts,
-    :node_selection,
-    :altmin_flag,]
+filtered_results = deepcopy(results_df)
+gdf = groupby(
+    filtered_results, 
+    [:k, :n, :p, :noise, :γ, :use_disjunctive_cuts, :node_selection, :altmin_flag]
 )
-    if size(g, 1) != 20
-        println("n = $(g.n[1]), p = $(g.p[1]), γ = $(g.γ[1]), use_disjunctive_cuts = $(g.use_disjunctive_cuts[1]), node_selection = $(g.node_selection[1]), altmin_flag = $(g.altmin_flag[1])")
-        println(setdiff(1:20, g.seed))
-    end
-end
-
-filter(
-    r -> (r.n == 30),
-    results_df
-)
-filter(
-    r -> (r.node_selection == "depthfirst"),
-    results_df
-)
-filter(
-    r -> (!r.altmin_flag),
-    results_df
+combine_df = combine(
+    gdf,
+    :solve_time_relaxation => geomean,
+    :relative_gap => (x -> geomean(abs.(x))) => :relative_gap_geomean,
+    :nodes_explored => mean,
 )
 
+node_selection_relative_gap_df = unstack(
+    combine_df,
+    [:n, :p, :γ, :use_disjunctive_cuts, :altmin_flag],
+    :node_selection, 
+    :relative_gap_geomean,
+)
+node_selection_solve_time_df = unstack(
+    combine_df,
+    [:n, :p, :γ, :use_disjunctive_cuts, :altmin_flag],
+    :node_selection, 
+    :solve_time_relaxation_geomean,
+)
+sort(
+    filter(
+        r -> (r.p == 2.0 && r.γ == 20.0),
+        node_selection_relative_gap_df,
+    ),
+    [:n, :altmin_flag, :use_disjunctive_cuts],
+)
+sort(
+    filter(
+        r -> (r.p == 2.0 && r.γ == 20.0),
+        node_selection_solve_time_df,
+    ),
+    [:n, :altmin_flag, :use_disjunctive_cuts],
+)
+
+sort(
+    filter(
+        r -> (r.p == 2.0 && r.γ == 80.0),
+        node_selection_relative_gap_df,
+    ),
+    [:n, :altmin_flag, :use_disjunctive_cuts],
+)
+sort(
+    filter(
+        r -> (r.p == 2.0 && r.γ == 80.0),
+        node_selection_solve_time_df,
+    ),
+    [:n, :altmin_flag, :use_disjunctive_cuts],
+)
+
+sort(
+    filter(
+        r -> (r.p == 3.0 && r.γ == 20.0),
+        node_selection_relative_gap_df,
+    ),
+    [:n, :altmin_flag, :use_disjunctive_cuts],
+)
+sort(
+    filter(
+        r -> (r.p == 3.0 && r.γ == 20.0),
+        node_selection_solve_time_df,
+    ),
+    [:n, :altmin_flag, :use_disjunctive_cuts],
+)
+
+
+# TODO: at a start, a 4 * 3 table (node selection, altmin * use_disjunctive_cuts)
+altmin_flag_relative_gap_df = unstack(
+    combine_df,
+    [:n, :p, :γ, :use_disjunctive_cuts, :node_selection],
+    :altmin_flag, 
+    :relative_gap_geomean,
+)
+altmin_flag_solve_time_df = unstack(
+    combine_df,
+    [:n, :p, :γ, :use_disjunctive_cuts, :node_selection],
+    :altmin_flag, 
+    :solve_time_relaxation_geomean,
+)
+use_disjunctive_cuts_relative_gap_df = unstack(
+    combine_df,
+    [:n, :p, :γ, :altmin_flag, :node_selection],
+    :use_disjunctive_cuts, 
+    :relative_gap_geomean,
+)
+use_disjunctive_cuts_solve_time_df = unstack(
+    combine_df,
+    [:n, :p, :γ, :altmin_flag, :node_selection],
+    :use_disjunctive_cuts, 
+    :solve_time_relaxation_geomean,
+)
+regularization_relative_gap_df = unstack(
+    combine_df,
+    [:n, :p, :use_disjunctive_cuts, :altmin_flag, :node_selection],
+    :γ, 
+    :relative_gap_geomean,
+)
+regularization_solve_time_df = unstack(
+    combine_df,
+    [:n, :p, :use_disjunctive_cuts, :altmin_flag, :node_selection],
+    :γ, 
+    :solve_time_relaxation_geomean,
+)
