@@ -5,7 +5,10 @@ k_range = [2]
 n_range = [10, 20, 30, 40, 50]
 p_range = [2.0, 2.5, 3.0]
 seed_range = collect(1:20)
-kind_range = ["pkn", "pkn log10(n)"]
+kind_range = kind_range = [
+    "pkn", 
+    "pkn \\log_{10}(n)",
+]
 params = [
     (true, true, false, false),
     (false, false, false, true), 

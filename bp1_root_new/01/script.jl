@@ -40,7 +40,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
 
     if kind == "pkn"
         num_indices = Int(ceil(p * k * n))
-    elseif kind == "pkn log10(n)"
+    elseif kind == "pkn \\log_{10}(n)"
         num_indices = Int(ceil(p * k * n * log10(n)))
     end
     time_limit = 3600
