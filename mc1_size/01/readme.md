@@ -6,3 +6,5 @@
 - Alternating minimization: yes
 
 # TODO:
+- [ ] potentially rerun all this code because of changes in altmin procedure
+- [ ] also potentially run the $pkn$ regime

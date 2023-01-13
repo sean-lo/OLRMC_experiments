@@ -8,7 +8,16 @@ using DataFrames
 
 # simple test case to quickly compile 
 r = @suppress test_matrix_completion_disjunctivecuts(
-    1, 10, 10, 30, 0, 0.01, 20.0;
+    1, 10, 10, 20, 0, 0.01, 20.0;
+    node_selection = "bestfirst",
+    disjunctive_cuts_type = "linear",
+    disjunctive_cuts_breakpoints = "smallest_1_eigvec",
+    add_Shor_valid_inequalities = false,
+    time_limit = 30,
+    with_log = false,
+)
+r = @suppress test_matrix_completion_disjunctivecuts(
+    1, 10, 10, 40, 0, 0.01, 20.0;
     node_selection = "bestfirst",
     disjunctive_cuts_type = "linear",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",
@@ -33,8 +42,13 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     seed = args_df[row_index, :seed]
     noise = args_df[row_index, :noise]
     γ = args_df[row_index, :γ]
-    
-    num_indices = Int(ceil(p * k * n * log10(n)))
+    kind = args_df[row_index, :kind]
+
+    if kind == "pkn"
+        num_indices = Int(ceil(p * k * n))
+    elseif kind == "pkn log_{10}(n)"
+        num_indices = Int(ceil(p * k * n * log10(n)))
+    end
     local time_limit = 3600
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
