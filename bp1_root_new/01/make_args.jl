@@ -7,7 +7,7 @@ p_range = [2.0, 2.5, 3.0]
 seed_range = collect(1:20)
 kind_range = kind_range = [
     "pkn", 
-    "pkn \\log_{10}(n)",
+    "pkn log_{10}(n)",
 ]
 params = [
     (true, true, false, false),

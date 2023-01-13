@@ -7,8 +7,8 @@ p_range = [2.0, 2.5, 3.0]
 seed_range = collect(1:20)
 kind_range = [
     "pkn", 
-    "pkn \\log_{10}(n)",
-    "pkn^{6/5} \\log_{10}(n) / 10^{1/5}",
+    "pkn log_{10}(n)",
+    "pkn^{6/5} log_{10}(n) / 10^{1/5}",
     "pkn^{3/2} / 10^{1/2}",
     "pkn^{2} / 10",
 ]

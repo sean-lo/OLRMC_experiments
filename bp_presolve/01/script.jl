@@ -33,9 +33,9 @@ for row_index in task_index:n_tasks:size(args_df, 1)
 
     if kind == "pkn"
         num_indices = Int(ceil(p * k * n))
-    elseif kind == "pkn \\log_{10}(n)"
+    elseif kind == "pkn log_{10}(n)"
         num_indices = Int(ceil(p * k * n * log10(n)))
-    elseif kind == "pkn^{6/5} \\log_{10}(n) / 10^{1/5}"
+    elseif kind == "pkn^{6/5} log_{10}(n) / 10^{1/5}"
         num_indices = Int(ceil(p * k * n^(1.2) * log10(n) / 10^(0.2)))
     elseif kind == "pkn^{3/2} / 10^{1/2}"
         num_indices = Int(ceil(p * k * n^(1.5) / sqrt(10.0)))
