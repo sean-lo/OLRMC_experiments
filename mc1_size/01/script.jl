@@ -50,6 +50,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
         root_only = false,
         with_log = false,
         altmin_flag = true,
+        use_max_steps = false,
     )
     local r = result.value
     
