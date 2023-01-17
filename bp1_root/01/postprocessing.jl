@@ -1,9 +1,7 @@
 using CSV
 using Glob
 using DataFrames
-# using Plots
 using StatsBase
-# using StatsPlots
 using CairoMakie
 
 results_filepath = "$(@__DIR__)/combined.csv"
