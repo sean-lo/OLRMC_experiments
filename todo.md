@@ -1,3 +1,10 @@
-- [ ] run mc1_altmin
-- [ ] run mc1_branch
+- [x] run mc1_altmin
+- [x] run mc1_branch
 - [ ] run mc2_size
+- [ ] rerun bp1_root
+- [ ] rerun bp2_root
+- [ ] investigate bp1_root and bp2_root: 
+    - [ ] include "kill switch" that stops 
+- [ ] make mc1_root_fractional
+- [ ] make bp1_root_fractional?
+- [ ] idea for size: plot of "proportion entries" against "time taken until 1e-4"?
