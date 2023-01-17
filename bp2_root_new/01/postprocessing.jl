@@ -14,70 +14,140 @@ sort!(results_df, [
 ]) 
 CSV.write(results_filepath, results_df)
 
-filtered_results_df = deepcopy(results_df)
+filtered_results_pknlog_df = deepcopy(results_df)
+filtered_results_pkn_df = deepcopy(results_df)
 filter!(
     r -> (r.num_indices == Int(ceil(r.p * r.k * r.n * log10(r.n)))),
-    filtered_results_df
+    filtered_results_pknlog_df
 )
-filtered_results_df[!, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities]]
-lb_proportion_df = deepcopy(filtered_results_df)
+filter!(
+    r -> (r.num_indices == Int(ceil(r.p * r.k * r.n))),
+    filtered_results_pkn_df
+)
+
+
 
 for g in groupby(
-    lb_proportion_df,
+    filtered_results_pknlog_df,
     [:k, :n, :p, :num_indices, :seed]
 )
     ubdf = filter(
         r -> !r.root_only,
-        g
+        g,
     )
-    ub = (nrow(ubdf) ≥ 1 ? ubdf[1,:upper_bound] : 0.0)
-    g[!,:true_optimality_gap] = abs.((ub .- g[!,:lower_bound]) ./ g[!,:lower_bound])
+    if nrow(ubdf) > 0
+        ub = ubdf[1, :upper_bound]
+        g[!, :true_optimality_gap] = abs.((ub .- g[!, :lower_bound]) ./ g[!, :lower_bound])
+    else
+        g[!, :true_optimality_gap] .= NaN
+    end
 end
-lb_proportion_df[!, :true_optimality_gap]
+for g in groupby(
+    filtered_results_pkn_df,
+    [:k, :n, :p, :num_indices, :seed]
+)
+    ubdf = filter(
+        r -> !r.root_only,
+        g,
+    )
+    if nrow(ubdf) > 0
+        ub = ubdf[1, :upper_bound]
+        g[!, :true_optimality_gap] = abs.((ub .- g[!, :lower_bound]) ./ g[!, :lower_bound])
+    else
+        g[!, :true_optimality_gap] .= NaN
+    end
+end
+
 filter!(
     r -> r.root_only, 
-    lb_proportion_df,
+    filtered_results_pknlog_df,
 )
-gdf = groupby(
-    lb_proportion_df,
+pknlog_gdf = groupby(
+    filtered_results_pknlog_df,
     [:k, :n, :p, :num_indices, :presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities,]
 )
-transform!(gdf, nrow)
-combine_df = combine(
-    gdf, 
-    [:n, :entries_presolved, :nrow] => ((x, y, z) -> sum(y .== x .* x) / 20) => :proportion_presolved,
+transform!(pknlog_gdf, nrow)
+pknlog_combine_df = combine(
+    pknlog_gdf,
+    nrow,
+    [:n, :entries_presolved, :nrow] => ((x, y, z) -> sum(y .== x .* x) / z[1]) => :proportion_presolved,
     :solve_time_relaxation => mean,
+    :solve_time_relaxation => geomean,
+    :true_optimality_gap => mean,
     :true_optimality_gap => geomean,
 )
-CSV.write("$(@__DIR__)/summary.csv", combine_df)
+CSV.write("$(@__DIR__)/pknlog_summary.csv", pknlog_combine_df)
 
-combine_df
-# FIXME: change later
-combine_df[isnan.(combine_df.true_optimality_gap_geomean), :true_optimality_gap_geomean] .= 0.0
-combine_df[combine_df.n .== 10, :proportion_presolved] ./= 2
-combine_df[isinf.(combine_df.true_optimality_gap_geomean), :true_optimality_gap_geomean] .= 1.0
-
-groupby(
-    combine_df, 
-    [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities]
+filter!(
+    r -> r.root_only, 
+    filtered_results_pkn_df,
 )
+pkn_gdf = groupby(
+    filtered_results_pkn_df,
+    [:k, :n, :p, :num_indices, :presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities,]
+)
+transform!(pkn_gdf, nrow)
+pkn_combine_df = combine(
+    pkn_gdf, 
+    nrow,
+    [:n, :entries_presolved, :nrow] => ((x, y, z) -> sum(y .== x .* x) / z[1]) => :proportion_presolved,
+    :solve_time_relaxation => mean,
+    :solve_time_relaxation => geomean,
+    :true_optimality_gap => mean,
+    :true_optimality_gap => geomean,
+)
+CSV.write("$(@__DIR__)/pkn_summary.csv", pkn_combine_df)
+
+pkn_combine_df
+
+pkn_combine_df[isnan.(pkn_combine_df.true_optimality_gap_geomean), :]
+pkn_combine_df[isinf.(pkn_combine_df.true_optimality_gap_geomean), :]
+
+# FIXME: change later
+pkn_combine_df[isnan.(pkn_combine_df.true_optimality_gap_geomean), :true_optimality_gap_geomean] .= 0.0
+
+pknlog_combine_df
+
+pknlog_combine_df[isnan.(pknlog_combine_df.true_optimality_gap_geomean), :]
+pknlog_combine_df[isinf.(pknlog_combine_df.true_optimality_gap_geomean), :]
+
+# FIXME: change later
+pknlog_combine_df[isnan.(pknlog_combine_df.true_optimality_gap_geomean), :true_optimality_gap_geomean] .= 0.0
 
 for g in groupby(
-    combine_df, 
+    pknlog_combine_df, 
     [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities]
 )
     println(unstack(g, :n, :p, :proportion_presolved))
 end
 
-for g in groupby(combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
+for g in groupby(pknlog_combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
     println(unstack(g, :n, :p, :solve_time_relaxation_mean))
 end
 
-for g in groupby(combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
+for g in groupby(pknlog_combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
+    println(unstack(g, :n, :p, :true_optimality_gap_mean))
+end
+for g in groupby(pknlog_combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
     println(unstack(g, :n, :p, :true_optimality_gap_geomean))
 end
 
-combine_df
+for g in groupby(
+    pkn_combine_df, 
+    [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities]
+)
+    println(unstack(g, :n, :p, :proportion_presolved))
+end
+
+for g in groupby(pkn_combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
+    println(unstack(g, :n, :p, :solve_time_relaxation_mean))
+end
+for g in groupby(pkn_combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
+    println(unstack(g, :n, :p, :true_optimality_gap_mean))
+end
+for g in groupby(pkn_combine_df, [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities])
+    println(unstack(g, :n, :p, :true_optimality_gap_geomean))
+end
 
 # Plot heatmap of 
 p_range = unique(results_df[:,:p])
