@@ -3,10 +3,10 @@ using DataFrames
 
 n_range = [10, 20, 30]
 p_range = [2.0, 3.0]
-noise_range = [0.1]
+noise_range = [0.1, 0.01]
 γ_range = [20.0, 80.0]
 seed_range = collect(1:20)
-type_range = ["none", "4", "43"]
+type_range = ["none", "4", "43", "432"]
 
 args_df = DataFrame(
     k = Int[],
