@@ -9,116 +9,69 @@ results_filepath = "$(@__DIR__)/combined.csv"
 results_df = CSV.read(results_filepath, DataFrame)
 sort!(results_df, [
     :k, :n, :p, :seed, :noise, :γ,
-    :use_disjunctive_cuts,
-    :node_selection,
-    :altmin_flag,
+    :max_altmin_probability,
+    :min_altmin_probability,
+    :altmin_probability_decay_rate,
 ])
 CSV.write(results_filepath, results_df)
 
 filtered_results = deepcopy(results_df)
 gdf = groupby(
     filtered_results, 
-    [:k, :n, :p, :noise, :γ, :use_disjunctive_cuts, :node_selection, :altmin_flag]
+    [:k, :n, :p, :noise, :γ, 
+    :max_altmin_probability,
+    :min_altmin_probability,
+    :altmin_probability_decay_rate,]
 )
 combine_df = combine(
     gdf,
-    :solve_time_relaxation => geomean,
+    :time_taken => geomean,
     :relative_gap => (x -> geomean(abs.(x))) => :relative_gap_geomean,
-    :nodes_explored => mean,
+    :nodes_explored => geomean,
+    :solve_time_altmin => geomean,
 )
 
-node_selection_relative_gap_df = unstack(
+decay_rate_time_taken_df = unstack(
     combine_df,
-    [:n, :p, :γ, :use_disjunctive_cuts, :altmin_flag],
-    :node_selection, 
+    [
+        :n, :p, :γ, :max_altmin_probability, :min_altmin_probability,
+    ],
+    :altmin_probability_decay_rate,
+    :time_taken_geomean,
+)
+decay_rate_relative_gap_df = unstack(
+    combine_df,
+    [
+        :n, :p, :γ, :max_altmin_probability, :min_altmin_probability,
+    ],
+    :altmin_probability_decay_rate,
     :relative_gap_geomean,
 )
-node_selection_solve_time_df = unstack(
+decay_rate_nodes_explored_df = unstack(
     combine_df,
-    [:n, :p, :γ, :use_disjunctive_cuts, :altmin_flag],
-    :node_selection, 
-    :solve_time_relaxation_geomean,
+    [
+        :n, :p, :γ, :max_altmin_probability, :min_altmin_probability,
+    ],
+    :altmin_probability_decay_rate,
+    :nodes_explored_geomean,
 )
-sort(
-    filter(
-        r -> (r.p == 2.0 && r.γ == 20.0),
-        node_selection_relative_gap_df,
-    ),
-    [:n, :altmin_flag, :use_disjunctive_cuts],
-)
-sort(
-    filter(
-        r -> (r.p == 2.0 && r.γ == 20.0),
-        node_selection_solve_time_df,
-    ),
-    [:n, :altmin_flag, :use_disjunctive_cuts],
+decay_rate_solve_time_altmin_df = unstack(
+    combine_df,
+    [
+        :n, :p, :γ, :max_altmin_probability, :min_altmin_probability,
+    ],
+    :altmin_probability_decay_rate,
+    :solve_time_altmin_geomean,
 )
 
-sort(
-    filter(
-        r -> (r.p == 2.0 && r.γ == 80.0),
-        node_selection_relative_gap_df,
+filter(
+    r -> (
+        # r.n == 10
+        r.p == 2.0
+        && r.γ == 20.0
     ),
-    [:n, :altmin_flag, :use_disjunctive_cuts],
-)
-sort(
-    filter(
-        r -> (r.p == 2.0 && r.γ == 80.0),
-        node_selection_solve_time_df,
-    ),
-    [:n, :altmin_flag, :use_disjunctive_cuts],
-)
-
-sort(
-    filter(
-        r -> (r.p == 3.0 && r.γ == 20.0),
-        node_selection_relative_gap_df,
-    ),
-    [:n, :altmin_flag, :use_disjunctive_cuts],
-)
-sort(
-    filter(
-        r -> (r.p == 3.0 && r.γ == 20.0),
-        node_selection_solve_time_df,
-    ),
-    [:n, :altmin_flag, :use_disjunctive_cuts],
-)
-
-
-# TODO: at a start, a 4 * 3 table (node selection, altmin * use_disjunctive_cuts)
-altmin_flag_relative_gap_df = unstack(
     combine_df,
-    [:n, :p, :γ, :use_disjunctive_cuts, :node_selection],
-    :altmin_flag, 
-    :relative_gap_geomean,
-)
-altmin_flag_solve_time_df = unstack(
-    combine_df,
-    [:n, :p, :γ, :use_disjunctive_cuts, :node_selection],
-    :altmin_flag, 
-    :solve_time_relaxation_geomean,
-)
-use_disjunctive_cuts_relative_gap_df = unstack(
-    combine_df,
-    [:n, :p, :γ, :altmin_flag, :node_selection],
-    :use_disjunctive_cuts, 
-    :relative_gap_geomean,
-)
-use_disjunctive_cuts_solve_time_df = unstack(
-    combine_df,
-    [:n, :p, :γ, :altmin_flag, :node_selection],
-    :use_disjunctive_cuts, 
-    :solve_time_relaxation_geomean,
-)
-regularization_relative_gap_df = unstack(
-    combine_df,
-    [:n, :p, :use_disjunctive_cuts, :altmin_flag, :node_selection],
-    :γ, 
-    :relative_gap_geomean,
-)
-regularization_solve_time_df = unstack(
-    combine_df,
-    [:n, :p, :use_disjunctive_cuts, :altmin_flag, :node_selection],
-    :γ, 
-    :solve_time_relaxation_geomean,
-)
+)[
+    !,
+    Not([:k, :p, :noise, :γ, :max_altmin_probability])
+]
