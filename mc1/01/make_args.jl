@@ -1,8 +1,8 @@
 using CSV
 using DataFrames
 
-n_range = [10, 20, 30]
-p_range = [2.0, 3.0]
+n_range = [10, 20, 30, 40, 50]
+p_range = [2.0, 2.5, 3.0]
 noise_range = [0.1]
 γ_range = [20.0, 80.0]
 seed_range = collect(1:20)
@@ -42,4 +42,15 @@ for (
         )
     )
 end
+sort!(
+    args_df,
+    [
+        order(:use_disjunctive_cuts, rev = true),
+        order(:γ),
+        order(:n),
+        order(:p, rev  = true),
+        order(:node_selection),
+        order(:altmin_flag),
+    ]
+)
 CSV.write("$(@__DIR__)/args.csv", args_df)
