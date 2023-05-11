@@ -1,4 +1,4 @@
-include("../../../MCBnB/src/matrix_completion.jl")
+include("../../../MCBnB/src/MCBnB.jl")
 include("../../../MCBnB/src/utils.jl")
 include("../../utils.jl")
 
