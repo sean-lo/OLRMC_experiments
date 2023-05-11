@@ -51,7 +51,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     )
 
     num_indices = Int(ceil(p * k * n * log10(n)))
-    time_limit = 3600
+    time_limit = 7200
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
         continue

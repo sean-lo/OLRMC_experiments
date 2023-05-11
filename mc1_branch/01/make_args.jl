@@ -1,7 +1,7 @@
 using CSV
 using DataFrames
 
-n_range = [10, 20, 30]
+n_range = [10, 20, 30, 40, 50]
 p_range = [2.0, 3.0]
 noise_range = [0.1]
 γ_range = [20.0, 80.0]
@@ -48,4 +48,11 @@ for (
         )
     )
 end
+sort!(
+    args_df,
+    [
+        order(:n),
+        order(:p, rev = true),
+    ]
+)
 CSV.write("$(@__DIR__)/args.csv", args_df)
