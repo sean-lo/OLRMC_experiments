@@ -3,11 +3,11 @@ using DataFrames
 
 include("../../utils.jl")
 
-n_range = [10, 20, 30, 40, 50]
+n_range = [75, 100, 125, 150]
 p_range = [2.0, 2.5, 3.0]
 noise_range = [0.1]
 γ_range = [80.0]
-seed_range = collect(1:50)
+seed_range = collect(21:50)
 kind_range = [
     "pkn log_{10}(n)",
 ]
@@ -35,23 +35,31 @@ for (
         (2, n, p, seed, noise, γ, kind)
     )
 end
-# transform!(
-#     args_df, 
-#     [:p, :k, :n, :kind] 
-#     => ByRow((p, k, n, kind) -> string_to_num_indices(p, k, n, kind))
-#     => :num_indices,
-# )
-# results_df = CSV.read("$(@__DIR__)/../combined.csv", DataFrame) |>
-#     x -> select(
-#         x, 
-#         [:k, :n, :p, :seed, :noise, :γ, :num_indices]
-#     )
-# new_args_df = antijoin(
-#     args_df, 
-#     results_df, 
-#     on = names(results_df)
-# )
-new_args_df = args_df
+sort!(
+    args_df,
+    [
+        order(:n),    
+        order(:kind, by = length, rev = true),
+        order(:p, rev = true),
+    ]
+)
+transform!(
+    args_df, 
+    [:p, :k, :n, :kind] 
+    => ByRow((p, k, n, kind) -> string_to_num_indices(p, k, n, kind))
+    => :num_indices,
+)
+results_df = CSV.read("$(@__DIR__)/../combined.csv", DataFrame) |>
+    x -> select(
+        x, 
+        [:k, :n, :p, :seed, :noise, :γ, :num_indices]
+    )
+new_args_df = antijoin(
+    args_df, 
+    results_df, 
+    on = names(results_df)
+)
+# new_args_df = args_df
 filter!(
     r -> (Int(ceil(r.p * r.k * r.n * log10(r.n))) ≤ r.n * r.n),
     new_args_df

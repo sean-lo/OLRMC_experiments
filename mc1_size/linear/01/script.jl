@@ -1,5 +1,5 @@
-include("../../../mpco/test_matrix_completion_disjunctivecuts.jl")
-include("../../utils.jl")
+include("../../../../mpco/test_matrix_completion_disjunctivecuts.jl")
+include("../../../utils.jl")
 
 using .TestMatrixCompletionDisjunctiveCuts
 using StatsBase
@@ -9,7 +9,7 @@ using DataFrames
 
 # simple test case to quickly compile 
 r = @suppress test_matrix_completion_disjunctivecuts(
-    2, 10, 10, 80, 0, 0.01, 20.0;
+    1, 10, 10, 20, 0, 0.01, 20.0;
     node_selection = "bestfirst",
     disjunctive_cuts_type = "linear",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",
@@ -18,7 +18,7 @@ r = @suppress test_matrix_completion_disjunctivecuts(
     with_log = false,
 )
 r = @suppress test_matrix_completion_disjunctivecuts(
-    2, 10, 10, 40, 0, 0.01, 20.0;
+    1, 10, 10, 40, 0, 0.01, 20.0;
     node_selection = "bestfirst",
     disjunctive_cuts_type = "linear",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",

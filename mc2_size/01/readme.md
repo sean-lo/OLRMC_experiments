@@ -4,3 +4,4 @@
 - Eigenvalue disjunctions: 
 - Node selection: only bestfirst
 - Alternating minimization: yes
+- `linear` branching strategy

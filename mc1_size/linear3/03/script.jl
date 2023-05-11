@@ -1,4 +1,5 @@
-include("../../../mpco/test_matrix_completion_disjunctivecuts.jl")
+include("../../../../mpco/test_matrix_completion_disjunctivecuts.jl")
+include("../../../utils.jl")
 
 using .TestMatrixCompletionDisjunctiveCuts
 using StatsBase
@@ -10,7 +11,7 @@ using DataFrames
 r = @suppress test_matrix_completion_disjunctivecuts(
     1, 10, 10, 20, 0, 0.01, 20.0;
     node_selection = "bestfirst",
-    disjunctive_cuts_type = "linear",
+    disjunctive_cuts_type = "linear3",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",
     add_Shor_valid_inequalities = false,
     time_limit = 30,
@@ -19,7 +20,7 @@ r = @suppress test_matrix_completion_disjunctivecuts(
 r = @suppress test_matrix_completion_disjunctivecuts(
     1, 10, 10, 40, 0, 0.01, 20.0;
     node_selection = "bestfirst",
-    disjunctive_cuts_type = "linear",
+    disjunctive_cuts_type = "linear3",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",
     add_Shor_valid_inequalities = false,
     time_limit = 30,
@@ -44,11 +45,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     γ = args_df[row_index, :γ]
     kind = args_df[row_index, :kind]
 
-    if kind == "pkn"
-        num_indices = Int(ceil(p * k * n))
-    elseif kind == "pkn log_{10}(n)"
-        num_indices = Int(ceil(p * k * n * log10(n)))
-    end
+    num_indices = string_to_num_indices(p, k, n, kind)
     local time_limit = 3600
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
@@ -58,7 +55,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     result = @timed @suppress test_matrix_completion_disjunctivecuts(
         k, n, n, num_indices, seed, noise, γ;
         node_selection = "bestfirst",
-        disjunctive_cuts_type = "linear",
+        disjunctive_cuts_type = "linear3",
         disjunctive_cuts_breakpoints = "smallest_1_eigvec",
         time_limit = time_limit,
         root_only = false,

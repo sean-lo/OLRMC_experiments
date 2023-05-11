@@ -9,7 +9,7 @@ using DataFrames
 
 # simple test case to quickly compile 
 r = @suppress test_matrix_completion_disjunctivecuts(
-    2, 10, 10, 80, 0, 0.01, 20.0;
+    3, 10, 10, 90, 0, 0.01, 20.0;
     node_selection = "bestfirst",
     disjunctive_cuts_type = "linear",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",
@@ -18,7 +18,7 @@ r = @suppress test_matrix_completion_disjunctivecuts(
     with_log = false,
 )
 r = @suppress test_matrix_completion_disjunctivecuts(
-    2, 10, 10, 40, 0, 0.01, 20.0;
+    3, 10, 10, 60, 0, 0.01, 20.0;
     node_selection = "bestfirst",
     disjunctive_cuts_type = "linear",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",
@@ -52,27 +52,27 @@ for row_index in task_index:n_tasks:size(args_df, 1)
         continue
     end
 
-    result = @timed @suppress test_matrix_completion_disjunctivecuts(
-        k, n, n, num_indices, seed, noise, γ;
-        node_selection = "bestfirst",
-        disjunctive_cuts_type = "linear",
-        disjunctive_cuts_breakpoints = "smallest_1_eigvec",
-        time_limit = time_limit,
-        root_only = false,
-        with_log = false,
-        altmin_flag = true,
-        use_max_steps = false,
-    )
-    local r = result.value
-    
-    lower_bound_root_node = r[3]["run_log"][1,:lower]
-    upper_bound_root_node = r[3]["run_log"][1,:upper]
-    relative_gap_root_node = r[3]["run_log"][1,:gap]
-    lower_bound = r[3]["run_log"][end,:lower]
-    upper_bound = r[3]["run_log"][end,:upper]
-    relative_gap = r[3]["run_log"][end,:gap]
-
     try
+        result = @timed @suppress test_matrix_completion_disjunctivecuts(
+            k, n, n, num_indices, seed, noise, γ;
+            node_selection = "bestfirst",
+            disjunctive_cuts_type = "linear",
+            disjunctive_cuts_breakpoints = "smallest_1_eigvec",
+            time_limit = time_limit,
+            root_only = false,
+            with_log = false,
+            altmin_flag = true,
+            use_max_steps = false,
+        )
+        local r = result.value
+        
+        lower_bound_root_node = r[3]["run_log"][1,:lower]
+        upper_bound_root_node = r[3]["run_log"][1,:upper]
+        relative_gap_root_node = r[3]["run_log"][1,:gap]
+        lower_bound = r[3]["run_log"][end,:lower]
+        upper_bound = r[3]["run_log"][end,:upper]
+        relative_gap = r[3]["run_log"][end,:gap]
+
         records = [
             (
                 seed = seed,
@@ -177,6 +177,6 @@ for row_index in task_index:n_tasks:size(args_df, 1)
         result = nothing
         CSV.write("$(@__DIR__)/records/$(row_index).csv", DataFrame(records))
     catch
-        continue
+        nothing
     end
 end
