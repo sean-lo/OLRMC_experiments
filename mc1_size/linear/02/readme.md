@@ -1,8 +1,7 @@
-- Matrix completion (rank-2)
+- Matrix completion (rank-1)
 - Full run
-- Sizes: 10, 20, 30, 40, 50
-- 50 random instances
-- $p k n log_{10}(n)$ entries filled
+- Sizes: 200, 250, 300
+- $pkn$ or $p k n log_{10}(n)$ entries filled
 - Eigenvalue disjunctions: 
 - Node selection: only bestfirst
 - Alternating minimization: yes

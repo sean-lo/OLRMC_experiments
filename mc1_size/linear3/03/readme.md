@@ -1,0 +1,8 @@
+- Matrix completion (rank-1)
+- Full run
+- Sizes: 50, 75, 100, 125, 150
+- $pkn$ or $p k n log_{10}(n)$ entries filled
+- Eigenvalue disjunctions: 
+- Node selection: only bestfirst
+- Disjunctive cuts type: `linear3` (4 pieces)
+- Alternating minimization: yes
