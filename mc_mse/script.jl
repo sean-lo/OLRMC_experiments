@@ -1,4 +1,4 @@
-include("../../mpco/test_matrix_completion_disjunctivecuts.jl")
+include("../../MCBnB/test_matrix_completion_disjunctivecuts.jl")
 include("../utils.jl")
 
 using .TestMatrixCompletionDisjunctiveCuts
