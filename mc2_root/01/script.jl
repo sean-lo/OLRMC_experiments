@@ -22,7 +22,6 @@ args_df = DataFrame(CSV.File("$(@__DIR__)/args.csv"))
 
 task_index = parse(Int, ARGS[1]) + 1
 n_tasks = parse(Int, ARGS[2])
-time_limit = nothing # CHANGE
 
 println("Processing rows: $(collect(task_index:n_tasks:size(args_df, 1)))")
 
@@ -39,23 +38,28 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     if type == "none"
         add_Shor_valid_inequalities = false
         Shor_valid_inequalities_noisy_rank1_num_entries_present = Int[]
+        time_limit = Int(2 * k * n * n)
     else
         add_Shor_valid_inequalities = true
         if type == "4"
             Shor_valid_inequalities_noisy_rank1_num_entries_present = [4]
+            time_limit = Int(2 * k * n * n)
         elseif type == "43"
             Shor_valid_inequalities_noisy_rank1_num_entries_present = [4,3]
+            time_limit = Int(20 * k * n * n)
         elseif type == "432"
             Shor_valid_inequalities_noisy_rank1_num_entries_present = [4,3,2]
+            time_limit = Int(200 * k * n * n)
         elseif type == "4321"
             Shor_valid_inequalities_noisy_rank1_num_entries_present = [4,3,2,1]
+            time_limit = Int(2000 * k * n * n)
         else
             error("""type unrecognized.""")
         end
     end
 
     num_indices = Int(ceil(p * k * n * log10(n)))
-    local time_limit = Int(2 * k * n * n)
+    time_limit = Int(2 * k * n * n)
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
         continue
