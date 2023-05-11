@@ -1,4 +1,4 @@
-include("../../../../MCBnB/test_matrix_completion_disjunctivecuts.jl")
+include("../../../../MCBnB/src/test_matrix_completion_disjunctivecuts.jl")
 
 using .TestMatrixCompletionDisjunctiveCuts
 using StatsBase

@@ -1,5 +1,5 @@
-include("../../../MCBnB/matrix_completion.jl")
-include("../../../MCBnB/utils.jl")
+include("../../../MCBnB/src/matrix_completion.jl")
+include("../../../MCBnB/src/utils.jl")
 include("../../utils.jl")
 
 using StatsBase
