@@ -1,5 +1,6 @@
 include("../../../mpco/matrix_completion.jl")
 include("../../../mpco/utils.jl")
+include("../../utils.jl")
 
 using StatsBase
 using Suppressor
@@ -31,17 +32,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     seed_index = args_df[row_index, :seed]
     kind = args_df[row_index, :kind]
 
-    if kind == "pkn"
-        num_indices = Int(ceil(p * k * n))
-    elseif kind == "pkn log_{10}(n)"
-        num_indices = Int(ceil(p * k * n * log10(n)))
-    elseif kind == "pkn^{6/5} log_{10}(n) / 10^{1/5}"
-        num_indices = Int(ceil(p * k * n^(1.2) * log10(n) / 10^(0.2)))
-    elseif kind == "pkn^{3/2} / 10^{1/2}"
-        num_indices = Int(ceil(p * k * n^(1.5) / sqrt(10.0)))
-    elseif kind == "pkn^{2} / 10"
-        num_indices = Int(ceil(p * k * n^2 / 10.0))
-    end
+    num_indices = string_to_num_indices(p, k, n, kind)
 
     records = []
     for seed in ((seed_index-1) * n_runs + 1):(seed_index * n_runs)
