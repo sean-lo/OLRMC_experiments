@@ -3,7 +3,7 @@ using DataFrames
 using DelimitedFiles
 
 include("../utils.jl")
-include("../../MCBnB/src/utils.jl")
+include("../../OptimalMatrixCompletion/src/utils.jl")
 
 args_df = DataFrame(CSV.File("$(@__DIR__)/args.csv"))
 

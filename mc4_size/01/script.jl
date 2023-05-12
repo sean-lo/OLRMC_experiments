@@ -1,4 +1,4 @@
-include("../../../MCBnB/src/test_matrix_completion_disjunctivecuts.jl")
+include("../../../OptimalMatrixCompletion/src/test_matrix_completion_disjunctivecuts.jl")
 include("../../utils.jl")
 
 using .TestMatrixCompletionDisjunctiveCuts

@@ -1,4 +1,4 @@
-include("../../../mpco/test_matrix_completion_disjunctivecuts.jl")
+include("../../../OptimalMatrixCompletion/src/test_matrix_completion_disjunctivecuts.jl")
 
 using .TestMatrixCompletionDisjunctiveCuts
 using StatsBase

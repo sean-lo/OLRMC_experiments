@@ -3,7 +3,7 @@ ssh slo@txe1-login.mit.edu
 
 # File transfer (local to cloud)
 (From mpco_research) 
-scp -r mpco slo@txe1-login.mit.edu:/home/gridsan/slo/slo
+scp -r OptimalMatrixCompletion slo@txe1-login.mit.edu:/home/gridsan/slo/slo
 
 # Query resources
 LLstat
