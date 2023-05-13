@@ -7,15 +7,21 @@ using DelimitedFiles
 using LaTeXStrings
 using ColorSchemes
 using CairoMakie
+using Printf
 
 results_df = vcat(
     [
         CSV.read(filepath, DataFrame)
-        for filepath in glob("bp1_root_new/01/combined_*.csv")
+        for filepath in glob("bp2_root_new/02/combined_*.csv")
     ]...
 )
+unique!(results_df, [
+    :k, :n, :p, :num_indices, :seed, 
+    :presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities,
+    :root_only,
+]) 
 sort!(results_df, [
-    :k, :n, :p, :seed, 
+    :k, :n, :p, :num_indices, :seed, 
     :presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities,
     :root_only,
 ])
@@ -25,24 +31,6 @@ filter!(
     r -> (r.num_indices == Int(ceil(r.p * r.k * r.n * log10(r.n)))),
     filtered_results_pknlog_df
 )
-
-for r in filter(
-    r -> (
-        !r.root_only
-        && isinf(r.upper_bound)
-    ),
-    filtered_results_pknlog_df
-) |> eachrow
-    filter!(
-        x -> !(
-            x.n == r.n
-            && x.p == r.p
-            && x.num_indices == r.num_indices
-            && x.seed == r.seed
-        ),
-        filtered_results_pknlog_df,
-    )
-end
 
 for g in groupby(
     filtered_results_pknlog_df,
@@ -57,6 +45,7 @@ for g in groupby(
         g[!, :true_optimality_gap] = abs.((ub .- g[!, :lower_bound]) ./ g[!, :lower_bound])
     else
         g[!, :true_optimality_gap] .= missing
+        println(g[1,[:k, :n, :p, :num_indices, :seed]])
     end
 end
 
@@ -80,7 +69,7 @@ pknlog_combine_df = combine(
     :true_optimality_gap => mean ∘ skipmissing => :true_optimality_gap_mean,
     :true_optimality_gap => geomean ∘ skipmissing => :true_optimality_gap_geomean,
 )
-CSV.write("postprocessing/tables/bp1_root_pknlog_summary.csv", pknlog_combine_df)
+CSV.write("postprocessing/tables/bp2_root_large_pknlog_summary.csv", pknlog_combine_df)
 
 for g in groupby(
     pknlog_combine_df, 
@@ -103,9 +92,9 @@ for g in groupby(pknlog_combine_df, [:presolve, :add_basis_pursuit_valid_inequal
     println(unstack(g, :n, :p, :true_optimality_gap_geomean))
 end
 
-# Plot heatmap
-p_range = unique(filtered_results_pknlog_df[:,:p])
-n_range = unique(filtered_results_pknlog_df[:,:n])
+# Plot heatmap of 
+p_range = unique(results_df[:,:p])
+n_range = unique(results_df[:,:n])
 groups = groupby(pknlog_combine_df,
     [:presolve, :add_basis_pursuit_valid_inequalities, :add_Shor_valid_inequalities]
 )
@@ -138,16 +127,16 @@ for (ind, g) in enumerate(groups)
         colorrange = (cmin, cmax),
     )
     for i in 1:length(p_range), j in 1:length(n_range)
-        textcolor = mat[i, j] < 0.3 ? :white : :black
+        textcolor = mat[i, j] < 1e6 ? :white : :black
         text!(
-            ax, "$(round(mat[i,j], digits = 2))",
+            ax, @sprintf("%g", mat[i,j]),
             position = (p_range[i], n_range[j]),
             color = textcolor, 
             align = (:center, :center),
-            fontsize = 20,
+            fontsize = 15,
         )
     end
 end
 Colorbar(grid[:,end+1], colorrange = (cmin, cmax))
 colgap!(grid, 15)
-save("postprocessing/plots/bp1_root_pknlog_optimality_gap_geomean.pdf", fig)
+save("postprocessing/plots/bp2_root_large_pknlog_optimality_gap_geomean.pdf", fig)

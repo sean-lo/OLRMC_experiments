@@ -168,7 +168,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
         ]
         result = nothing
         CSV.write("$(@__DIR__)/records/$(row_index).csv", DataFrame(records))
-    catch e 
+    catch e
         println(e)
         continue
     end

@@ -4,11 +4,10 @@ using DataFrames
 include("../../utils.jl")
 
 k_range = [2]
-n_range = [10, 20, 30, 40, 50]
-p_range = [2.0, 2.5, 3.0]
+n_range = [50, 75, 100]
+p_range = [2.0, 3.0]
 seed_range = collect(1:20)
 kind_range = [
-    "pkn", 
     "pkn log_{10}(n)",
 ]
 params = [
@@ -30,11 +29,23 @@ args_df = DataFrame(
     add_Shor_valid_inequalities = [],
     root_only = [],
 )
-for (k, n, p, seed, kind, (presolve, add_basis_pursuit_valid_inequalities, add_Shor_valid_inequalities, root_only)) in Iterators.product(k_range, n_range, p_range, seed_range, kind_range, params)
+for (
+    k, n, p, seed, kind, 
+    (
+        presolve, 
+        add_basis_pursuit_valid_inequalities, 
+        add_Shor_valid_inequalities, 
+        root_only
+    )
+) in Iterators.product(
+    k_range, n_range, p_range, seed_range, kind_range, 
+    params
+)
     push!(args_df, (k, n, p, seed, kind, presolve, add_basis_pursuit_valid_inequalities, add_Shor_valid_inequalities, root_only,))
 end
+
 sort!(
-    args_df,
+    args_df, 
     [
         order(:root_only, rev = true),
         order(:presolve),
