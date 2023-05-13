@@ -1,4 +1,0 @@
-- Basis pursuit (rank-1)
-- Comparison of tightness of LB at root node to eventual objective, for different parameters (presolve, BP linear equalities, BP Shor equalities)
-- For one of the above params, solve to optimality; for others, root node only
-- Also compare time taken, memory used

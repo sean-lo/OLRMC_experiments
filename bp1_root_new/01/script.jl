@@ -1,4 +1,5 @@
-include("../../../mpco/test_basis_pursuit_disjunctivecuts.jl")
+include("../../../OptimalMatrixCompletion/src/test_basis_pursuit_disjunctivecuts.jl")
+include("../../utils.jl")
 
 using .TestBasisPursuitDisjunctiveCuts
 using StatsBase
@@ -9,6 +10,16 @@ using DataFrames
 # simple test case to quickly compile 
 r1 = @suppress test_basis_pursuit_disjunctivecuts(
     1, 10, 10, 20, 0;
+    node_selection = "bestfirst",
+    disjunctive_cuts_type = "linear",
+    disjunctive_cuts_breakpoints = "smallest_1_eigvec",
+    presolve = true,
+    add_Shor_valid_inequalities = false,
+    time_limit = 60,
+    with_log = false,
+)
+r1 = @suppress test_basis_pursuit_disjunctivecuts(
+    1, 10, 10, 40, 0;
     node_selection = "bestfirst",
     disjunctive_cuts_type = "linear",
     disjunctive_cuts_breakpoints = "smallest_1_eigvec",
@@ -38,11 +49,7 @@ for row_index in task_index:n_tasks:size(args_df, 1)
     add_basis_pursuit_valid_inequalities = Bool(args_df[row_index, :add_basis_pursuit_valid_inequalities])
     root_only = Bool(args_df[row_index, :root_only])
 
-    if kind == "pkn"
-        num_indices = Int(ceil(p * k * n))
-    elseif kind == "pkn log_{10}(n)"
-        num_indices = Int(ceil(p * k * n * log10(n)))
-    end
+    num_indices = string_to_num_indices(p, k, n, kind)
     time_limit = 3600
 
     if !((n + n) * k ≤ num_indices ≤ n * n)
@@ -171,7 +178,8 @@ for row_index in task_index:n_tasks:size(args_df, 1)
         ]
         result = nothing
         CSV.write("$(@__DIR__)/records/$(row_index).csv", DataFrame(records))
-    catch
+    catch e
+        println(e)
         continue
     end
 end

@@ -1,6 +1,8 @@
 using CSV
 using DataFrames
 
+include("../../utils.jl")
+
 k_range = [1]
 n_range = [10, 20, 30, 40, 50]
 p_range = [2.0, 2.5, 3.0]
@@ -31,4 +33,43 @@ args_df = DataFrame(
 for (k, n, p, seed, kind, (presolve, add_basis_pursuit_valid_inequalities, add_Shor_valid_inequalities, root_only)) in Iterators.product(k_range, n_range, p_range, seed_range, kind_range, params)
     push!(args_df, (k, n, p, seed, kind, presolve, add_basis_pursuit_valid_inequalities, add_Shor_valid_inequalities, root_only,))
 end
-CSV.write("$(@__DIR__)/args.csv", args_df)
+sort!(
+    args_df, 
+    [
+        order(:root_only, rev = true),
+        order(:presolve),
+        order(:add_basis_pursuit_valid_inequalities),
+        order(:add_Shor_valid_inequalities, rev = true),
+        order(:kind),
+        order(:n), 
+        order(:p),
+    ]
+)
+transform!(
+    args_df, 
+    [:p, :k, :n, :kind] 
+    => ByRow((p, k, n, kind) -> string_to_num_indices(p, k, n, kind))
+    => :num_indices,
+)
+results_df = vcat(
+    [
+        CSV.read(filepath, DataFrame)
+        for filepath in glob("$(@__DIR__)/combined_*.csv")
+    ]...
+) |>
+    x -> select(
+        x, 
+        [
+            :k, :n, :p, :seed, :num_indices,
+            :root_only,
+            :presolve,
+            :add_basis_pursuit_valid_inequalities,
+            :add_Shor_valid_inequalities,
+        ]
+    )
+new_args_df = antijoin(
+    args_df, 
+    results_df, 
+    on = names(results_df)
+)
+CSV.write("$(@__DIR__)/args.csv", new_args_df)
