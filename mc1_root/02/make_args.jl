@@ -2,8 +2,8 @@ using CSV
 using DataFrames
 
 n_range = [50, 75, 100]
-p_range = [2.0]
-noise_range = [0.1, 0.2]
+p_range = [2.0, 3.0]
+noise_range = [0.1]
 γ_range = [20.0, 80.0]
 seed_range = collect(1:20)
 params = vcat(
@@ -47,4 +47,26 @@ for (
         )
     )
 end
+sort!(
+    args_df, 
+    [
+        order(:n),
+        order(:p),
+        order(:γ),
+    ]
+)
+args_df = vcat(
+    filter(
+        r -> r.type == "none",
+        args_df,
+    ),
+    filter(
+        r -> r.type == "4",
+        args_df,
+    ),
+    filter(
+        r -> (r.type == "43" && r.n != 100 && r.p != 3.0),
+        args_df,
+    ),
+)
 CSV.write("$(@__DIR__)/args.csv", args_df)
