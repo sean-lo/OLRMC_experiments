@@ -1,10 +1,10 @@
 # Experiments for Optimal Low-Rank Matrix Completion: Semidefinite Relaxations and Eigenvector Disjunctions
 
-Repository of numerical experiments for the paper "Optimal Low-Rank Matrix Completion: Semidefinite Relaxations and Eigenvector Disjunctions".
+Repository of numerical experiments for the paper [Optimal Low-Rank Matrix Completion: Semidefinite Relaxations and Eigenvector Disjunctions](https://optimization-online.org/2023/05/optimal-low-rank-matrix-completion-semidefinite-relaxations-and-eigenvector-disjunctions/).
 
 ## Use
 
-- Check that you have a valid installation of `Mosek`, as well as the package `OptimalMatrixCompletion.jl` installed.
+- Check that you have a valid installation of `Mosek`, as well as the package `OptimalMatrixCompletion.jl` (link [here](github.com/sean-lo/OptimalMatrixCompletion.jl)) installed.
 - The `/postprocessing` folder contains all postprocessing scripts, that transform raw data into tables and plots that appear in the paper.
     - A list corresponding figure and table numbers in the paper to file names in `/postprocessing/tables` and `/postprocessing/plots` is included in `/postprocessing/README.md`.
 - The experiments are grouped by folder, and are in all folders other than `/postprocessing`.
